@@ -5,10 +5,9 @@ import codecs
 import datetime
 import matplotlib.dates as mdates
 import pandas as pd
-from rsi import calculate_rsi
 
 
-def evaluate_stocks(stock: str):
+def parse_stock_file(stock: str):
     url_to_visit = load_yahoo_url(stock, "10y", info="quote")
     stock_file = []
     try:
@@ -33,9 +32,7 @@ def evaluate_stocks(stock: str):
         )
         df = pd.DataFrame.from_records(records)
         df.iloc[:, 0] = df.iloc[:, 0].apply(mdates.date2num)
-        date, _, _, _, closep, _, _ = df.values.tolist()
-        rsi = calculate_rsi(closep)
-        latest_rsi_value = rsi[-1]
-    except Exception as e:
-        latest_rsi_value = None
-    return latest_rsi_value
+        return df
+
+    except Exception:
+        return None

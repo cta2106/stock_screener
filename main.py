@@ -1,4 +1,5 @@
-from evaluate import evaluate_stocks
+from parse import parse_stock_file
+from rsi import calculate_rsi
 import yaml
 
 
@@ -9,9 +10,11 @@ def main():
     stocks = config["stocks"]
 
     for stock_name in stocks:
-        latest_rsi_value = evaluate_stocks(stock_name)
+        stock_df = parse_stock_file(stock_name)
 
-        if latest_rsi_value:
+        if stock_df is not None:
+            _, _, _, _, closep, _, _ = stock_df.values.tolist()
+            latest_rsi_value = calculate_rsi(closep)[-1]
 
             if latest_rsi_value < 30:
                 print("buy {}! rsi value: {}".format(stock_name, latest_rsi_value))
